@@ -1,5 +1,6 @@
-package com.cas.cnic.vo;
+package com.cas.cnic;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,14 +14,39 @@ import java.util.Set;
  */
 public class PrepareGraph {
 
-
     /**
-     * TODO
-     *
+     * @param inputFile
      * @return
      */
-    public static Map<Integer, Set<Integer>> readGraph() {
+    public static Map<Integer, Set<Integer>> readGraph(String inputFile) {
         Map<Integer, Set<Integer>> coMap = new HashMap<Integer, Set<Integer>>();
+
+        File file = new File(inputFile);
+        try {
+            if (file.isFile() && file.exists()) {
+                InputStreamReader read = new InputStreamReader(new FileInputStream(file));
+                BufferedReader bf = new BufferedReader(read);
+                String linetxt = null;
+                while ((linetxt = bf.readLine()) != null) {
+                    String[] arr = linetxt.split("\\|");
+                    Integer key = Integer.parseInt(arr[2]) - 1;
+                    Integer name = Integer.parseInt(arr[1]) - 1;
+                    if (coMap.containsKey(key)) {
+                        Set<Integer> users = coMap.get(key);
+                        users.add(name);
+                        coMap.put(key, users);
+                    } else {
+                        coMap.put(key, new HashSet<Integer>(name));
+                    }
+                }
+                read.close();
+            } else {
+                System.out.print("not find");
+            }
+        } catch (Exception e) {
+            System.out.print("flie error");
+            e.printStackTrace();
+        }
         return coMap;
     }
 
@@ -29,13 +55,14 @@ public class PrepareGraph {
      *
      * @param inputFile
      */
-    public static void prepare(String inputFile, int numOfUsers) {
+    public static void prepare(String inputFile) {
+        int numOfUsers = 5964;
         /**
          *  key表示文章的id，用存articleid-1，下标归一到0开始
          *  value表示id对应的作者的id列表，存userid-1，下标归一到0开始
          */
         Map<Integer, Set<Integer>> coMap;
-        coMap = readGraph();
+        coMap = readGraph(inputFile);
 
         /**
          * matrix[i][j] = w；表示i和j合著了w篇文章
@@ -59,8 +86,27 @@ public class PrepareGraph {
         }
 
         /**
-         * TODO
          * 输出矩阵到文件中，得到graph.txt
          */
+        String out = inputFile.substring(0, inputFile.length() - 4) + "_out.txt";
+        writeGraph(matrix, out);
+
+    }
+
+    public static void writeGraph(int[][] matrix, String outfile) {
+        try {
+            FileWriter fw = new FileWriter(outfile);
+            for (int i = 0; i < matrix.length; i++) {
+                for (int j = 0; j < matrix[i].length; j++) {
+                    if (matrix[i][j] == 0) continue;
+
+                    String s = new String("" + i + "_" + j + "_" + matrix[i][j] + "\n");
+                    fw.write(s);
+                }
+            }
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
