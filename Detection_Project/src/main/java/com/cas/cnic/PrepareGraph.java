@@ -88,7 +88,7 @@ public class PrepareGraph {
         /**
          * 输出矩阵到文件中，得到graph.txt
          */
-        String out = inputFile.substring(0, inputFile.length() - 4) + "_out.txt";
+        String out = inputFile.substring(0, inputFile.length() - 4) + "_out_new.txt";
         writeGraph(matrix, out);
 
     }
@@ -97,7 +97,7 @@ public class PrepareGraph {
         try {
             FileWriter fw = new FileWriter(outfile);
             for (int i = 0; i < matrix.length; i++) {
-                for (int j = 0; j < matrix[i].length; j++) {
+                for (int j = i; j < matrix[i].length; j++) {
                     if (matrix[i][j] == 0) continue;
 
                     String s = new String("" + i + "_" + j + "_" + matrix[i][j] + "\n");
