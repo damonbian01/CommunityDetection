@@ -23,7 +23,7 @@ public class CIKM_data {
                             for (int j = 0; j < 10220; j++) {
                                 mix = mix + array[i][j] + ",";
                             }
-                            mix = mix + array[i][10220] + "\r\n";
+                            mix = mix + array[i][10220] + "\n";
                             fw.write(mix);
                         }
 
